@@ -1,38 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Contact{% endblock %}
+{% block title %}Contact index{% endblock %}
 
 {% block body %}
-    <h1>Contact</h1>
+    <div class="container-fluid">
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ contact.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ contact.name }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ contact.email }}</td>
-            </tr>
-            <tr>
-                <th>Address</th>
-                <td>{{ contact.address }}</td>
-            </tr>
-            <tr>
-                <th>Phone</th>
-                <td>{{ contact.phone }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Tables</h1>
 
-    <a href="{{ path('app_contact_index') }}">back to list</a>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Contact Tables   <a href="{{ path('app_contact_new') }}" title="Add New Contacts"><i class="fas fa-plus" ></i> </a></h6>
+              
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                             <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                        {% for contact in contacts %}
+                            <tr>
+                                <td>{{ contact.id }}</td>
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.email }}</td>
+                                <td>{{ contact.address }}</td>
+                                <td>{{ contact.phone }}</td>
+                                <td>
+                                  
+                                    <a href="{{ path('app_contact_edit', {'id': contact.id}) }}" title="Edit" ><i class="fas fa-edit" ></i> </a>
+                                   <a href="{{ path('app_contact_delete', {'id': contact.id}) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ contact.id }}').submit();" >
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    <form id="delete-form-{{ contact.id }}" action="{{ path('app_contact_delete', {'id': contact.id}) }}" method="post" style="display: none;">
+                                        {{ csrf_token('delete' ~ contact.id) }}
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+                                    </form>
 
-    <a href="{{ path('app_contact_edit', {'id': contact.id}) }}">edit</a>
 
-    {{ include('contact/_delete_form.html.twig') }}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6">no records found</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

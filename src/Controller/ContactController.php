@@ -9,9 +9,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/contact")
+ * @IsGranted("ROLE_USER")
  */
 class ContactController extends AbstractController
 {
@@ -36,7 +38,7 @@ class ContactController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $contactRepository->add($contact);
-            return $this->redirectToRoute('app_contact_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_contact_show', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('contact/new.html.twig', [
@@ -46,12 +48,12 @@ class ContactController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="app_contact_show", methods={"GET"})
+     * @Route("/tables", name="app_contact_show", methods={"GET"})
      */
-    public function show(Contact $contact): Response
+    public function show(ContactRepository $contactRepository): Response
     {
         return $this->render('contact/show.html.twig', [
-            'contact' => $contact,
+            'contacts' => $contactRepository->findAll(),
         ]);
     }
 
@@ -65,7 +67,7 @@ class ContactController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $contactRepository->add($contact);
-            return $this->redirectToRoute('app_contact_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_contact_show', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('contact/edit.html.twig', [
@@ -75,7 +77,7 @@ class ContactController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="app_contact_delete", methods={"POST"})
+     * @Route("/{id}/delete", name="app_contact_delete", methods={"POST"})
      */
     public function delete(Request $request, Contact $contact, ContactRepository $contactRepository): Response
     {
@@ -83,6 +85,6 @@ class ContactController extends AbstractController
             $contactRepository->remove($contact);
         }
 
-        return $this->redirectToRoute('app_contact_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_contact_show', [], Response::HTTP_SEE_OTHER);
     }
 }
